@@ -1,82 +1,125 @@
 
+let humanScore = 0;
+let computerScore = 0;
+
 function getComputerChoice(){
-    const choice = Math.random();
-    if (choice <= 1/3){
-        return "Rock";
+    const choices = ["Rock", "Paper", "Scissors"];
+    return choices[Math.floor(Math.random() * choices.length)];
+}
+
+
+
+
+
+//creating header for our game
+const header = document.createElement("h1");
+header.textContent = "Welcome to my Rock Paper Scissors Game.";
+header.style.cssText = "text-align:center; color:green;";
+document.body.appendChild(header);
+
+const main = document.createElement("div");
+main.id = "main";
+main.style.cssText = "padding:10px; background-color:yellow; border:2px solid black; border-radius:5px;"
+document.body.appendChild(main);
+
+//creating results container
+const resultsDiv = document.createElement("div");
+resultsDiv.id = "results";
+resultsDiv.textContent = "Select your move to start the game!";
+resultsDiv.style.cssText = "text-align:center; background-color:white;; padding:20px; font-weight:800px; font-size: 36px; border:2px solid black;"
+main.appendChild(resultsDiv);
+
+    
+function playRound(humanChoice, computerChoice){
+    //Check is score of 5 is already reached
+    if (humanScore === 5 || computerScore === 5) return;
+
+    humanChoice = humanChoice.toLowerCase();
+    computerChoice = computerChoice.toLowerCase();
+
+    let roundResult = "";
+
+    if (humanChoice === computerChoice){
+        roundResult = `Draw! Both chose ${humanChoice}.`;
     }
-    if (choice <= 2/3){
-        return "Paper";
+    else if (
+        (humanChoice === "rock" && computerChoice === "scissors") ||
+        (humanChoice === "paper" && computerChoice === "rock") ||
+        (humanChoice === "scissors" && computerChoice === "paper")
+    ){
+        humanScore++;
+        roundResult = `Win! ${humanChoice} beats ${computerChoice}.`;
     }
     else{
-        return "Scissors";
+        computerScore++;
+        roundResult = `Loss! ${computerChoice} beats ${humanChoice}`;
     }
-}
+    //Updating DOM
+    resultsDiv.textContent = `${roundResult} | Score ->Player: ${humanScore} - Computer: ${computerScore}`;
 
-
-function getHumanChoice(){
-    const human_choice = prompt("Let's play Rock Paper Scissors: what is your choice: ");
-    return human_choice || "";
-}
-
-
-
-
-
-
-
-
-function playGame(){
-    let humanScore = 0;
-    let computerScore = 0;
-    function playRound(humanChoice, computerChoice){
-        humanChoice = humanChoice.toLowerCase()
-        computerChoice = computerChoice.toLowerCase()
-        if (humanChoice === computerChoice){
-            console.log(`You drew! You chose ${humanChoice} and the computer chose ${computerChoice}.`)
-        }
-        else if (humanChoice === "rock"){
-            if (computerChoice === "paper"){
-                console.log("You lose! Paper beats Rock.");
-                computerScore += 1;
-            }
-            else {
-                console.log("You Won! Rock beats Scissors");
-                humanScore += 1;
-            }
-        }
-        else if (humanChoice === "paper"){
-            if (computerChoice === "scissors"){
-                console.log("You Lost! Scissors beats Paper");
-                computerScore += 1;
-            }
-            else{
-                console.log("You Won! paper beats rock");
-                humanScore += 1;
-            }
-        }
-        else{
-            if (computerChoice === "paper"){
-                console.log("You Won! Scissors beats Paper.")
-                humanScore += 1;
-            }
-            else{
-                console.log("You Lost! Rock beats Scissors.")
-                computerScore += 1;
-            }
-        }
-
-
+    //Checking for winner
+    if (humanScore === 5){
+        resultsDiv.textContent = `🏆 GAME OVER: YOU WIN! Final Score: ${humanScore}-${computerScore}`;
+        resultsDiv.style.color = 'blue';
+        disableButtons();
+    } else if (computerScore === 5){
+        resultsDiv.textContent = `💻 GAME OVER: COMPUTER WINS! Final Score: ${computerScore}-${humanScore}`;
+        resultsDiv.style.color = "red";
+        disableButtons();
     }
-    for (let i  = 1; i <= 5; i++){
-        console.log(`---Round ${i}---`);
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-        playRound(humanSelection, computerSelection);
-    }
-    console.log(`---FINAL SCORE ---`);
-    console.log(`The Games Ends: COMPUTER: ${computerScore} | YOU: ${humanScore} `)
 
+    
+      
 
 }
 
-playGame();
+function disableButtons(){
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = "0.5";
+        btn.style.cursor = "not-allowed";
+    })
+}
+
+//creating div for buttons
+const btns = document.createElement("div");
+main.appendChild(btns);
+btns.style.cssText="display:flex; padding:5px; align-items:center; gap:5px; justify-content:space-around; margin:10px;"
+
+//creating buttons (DOM JS)
+const rockBtn = document.createElement("button");
+const paperBtn = document.createElement("button");
+const scissorsBtn = document.createElement("button");
+
+const buttons = [rockBtn, paperBtn, scissorsBtn]
+buttons.forEach(btn => {
+    btn.style.cssText = "background-color:green; color:white; border:2px solid green; border-radius:5px; padding 15px;font-size:30px;"
+});
+
+
+
+
+
+//Setting content and Ids
+rockBtn.id = "rock-btn";
+rockBtn.textContent = "Rock";
+btns.appendChild(rockBtn);
+
+paperBtn.id = "paper-btn";
+paperBtn.textContent = "Paper";
+btns.appendChild(paperBtn);
+
+scissorsBtn.id = "scissors-btn";
+scissorsBtn.textContent = "Scissors";
+btns.appendChild(scissorsBtn);
+
+
+//Adding event listeners
+rockBtn.addEventListener("click", () => playRound("rock", getComputerChoice()));
+paperBtn.addEventListener("click", () => playRound("paper", getComputerChoice()));
+scissorsBtn.addEventListener("click", () => playRound("scissors", getComputerChoice()));
+
+
+
+
+
